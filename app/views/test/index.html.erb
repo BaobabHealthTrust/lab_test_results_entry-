@@ -1,0 +1,163 @@
+
+<script type="text/javascript">
+    var measure_names = [];
+    function captureStatus(sta)
+    {
+        var status = sta;
+
+        if (status == 'Pass')
+        {   document.getElementById("test_measures").innerHTML = "";
+            document.getElementById("resultEntering").style.display = 'block';
+            document.getElementById("resultSaving").style.display = 'inline';
+            var n =  '<%= @test %>';
+            n = n.replace("&amp;","AND");
+            var _url = '/test/retrieve_test_details?test='+ n;
+            var tr = document.getElementById("test_measures");
+
+            jQuery.ajax({
+                    url: _url,
+                    async: false,
+                    success: function(res){
+                        var measures = JSON.parse(res);
+                        var counter = 0;
+                        for(var i  in measures)
+                        {
+                            var name =  measures[i]
+                            measure_names.push(name);
+                            var row = tr.insertRow(counter);
+                            var cel = row.insertCell(0);
+                            cel.innerHTML = name;
+                            
+                            var x = document.createElement("INPUT");
+                            x.setAttribute('class','form-control');
+                            x.setAttribute('width','80%');
+                            x.setAttribute('id',name);
+                            var cel = row.insertCell(1);
+                            cel.appendChild(x);
+
+                            counter++;
+                        }
+                    },
+                    error: function(err){   
+                        console.log(err);
+                    }
+            });
+               
+        }
+        else
+        {
+
+        }  
+    }
+
+
+    function saveMeasures()
+    {
+        var tracking_number =  '<%= @accession_number %>';
+        var test_name       =  '<%= @test %>';
+        test_name = test_name.replace("&amp;","AND")
+        var values = {};
+
+        var _url = '/test/save_results?test_name=' + test_name + "&tracking_number=" + tracking_number;
+        
+        for (var i in measure_names)
+        {  
+            var value = document.getElementById(measure_names[i]).value;
+            values[measure_names[i]] = value;
+        }
+
+        jQuery.ajax({
+                url: _url,
+                async: false,
+                data: {data: values},
+                success: function(res)
+                {  r = JSON.parse(res);
+                    document.getElementById("confirmation").style.display = 'inline';
+                    document.getElementById("test_measures").style.display = 'none';
+                    document.getElementById("resultSaving").style.display = 'none';
+
+                    console.log(r);
+                },
+                error: function(err)
+                {
+                    r = JSON.parse(err);
+                    console.log(r);
+                }
+        });
+  
+
+    }
+
+</script>
+
+
+
+<div class='row'>
+
+    <div class="col-sm-12" style='border-bottom: thin solid lightgrey; border-top: thin solid lighthrey; padding-left:3.3%;padding-top:-1%;'>
+        <div class='row'>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label> Order Status</label>
+                    <select class="form-control" style="width: 40%;" >
+                        <option onclick="captureStatus(this.value)" value="Pass">Pass</option>
+                        <option onclick="captureStatus(this.value)" value="Fail">Fail</option>
+                        <option onclick="captureStatus(this.value)" value="Void">Void</option>
+                    </select>
+                    
+                </div>
+            </div>
+      
+            <div class="col-sm-4" style="border-left: thin solid lightgrey;">
+                <table class="table">
+                    <tr>
+                        <td> <span style="font-weight: bold"> Patient Id: </span><span> <%=  @patient_id %></span> </td>
+                        <td> <span style="font-weight: bold"> Patient Gender: </span><span> <%=  @patient_gender %></span> </td>
+                    </tr>
+                    <tr>
+                        <td> <span style="font-weight: bold"> Patient Name: </span> <span> <%= @patient_name %> </span> </td>
+                        <td> <span style="font-weight: bold"> Patient DOB:  </span> <span> <%= @patient_DOB %></span> </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-sm-4"  style="border-left: thin solid lightgrey;">
+                <table class="table">
+                    <tr>
+                        <td> <span style="font-weight: bold"> Specimen Type: </span><span> <%= @sample_type %> </span> </td>
+                        <td> <span style="font-weight: bold"> Test Ordered: </span><span> <%= @test %> </span> </td>
+                    </tr>
+                    <tr>
+                        <td> <span style="font-weight: bold"> Accession Number: </span> <span> <%= @accession_number %> </span> </td>
+                        <td> <span style="font-weight: bold"> Date Ordered:  </span> <span> <%= @date_ordered %> </span> </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-sm-12" style="margin-top: 1%;">
+        <div class="col-sm-offset-2 col-sm-8" style="" >
+            <p style="color:green;font-weight:bold;display:none;" id='confirmation'>results successfuly saved </p>
+        </div
+    </div>
+
+    <div class="col-sm-12" style="margin-top: 1%;">
+        <div class='row'>
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4 " style=" height:500px;padding-top:0.3%;display: none;" id="resultEntering">
+                    <table class="table" id="test_measures">
+                    
+                        
+                    </table>
+            </div>   
+        </div>
+        <div class="col-sm-offset-2 col-sm-8" style="margin-top: 1%;border-top: thin solid lightgrey; padding-top: 1%;" >
+            <input type="button" value="back" class="btn btn-lg btn-danger" onclick="window.location='/'" >
+            <input type="button" value="save" class="btn btn-lg btn-success" onclick="saveMeasures()" id="resultSaving" style="display:none;">
+        </div>
+
+    </div>
+
+
+</div>
