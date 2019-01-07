@@ -58,4 +58,25 @@ class TestController < ApplicationController
     render plain: res[0].to_json and return
   end
 
+  def update_test_status
+    status = params[:status]
+    test_name = params[:test]
+    tracking_number = params[:tracking_number]
+    
+    who_updated = {
+      'id_number': '1',
+      'phone_number': '2939393',
+      'first_name': 'gibo',
+      'last_name': 'malolo'
+    }
+
+    res = TestService.update_test_status(tracking_number,test_name,status,who_updated)
+    if res['error'] == false
+      msg = true
+    else
+      msg = false
+    end
+    render plain: msg and return
+  end 
+
 end

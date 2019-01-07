@@ -63,6 +63,36 @@ module TestService
 
     end
 
+    def self.update_test_status(tracking_number,test_name,status,who_updated)
+        configs = YAML.load_file "#{Rails.root}/config/nlims_service.yml"
+        host = configs['host']
+        prefix = configs['prefix']
+        port = configs['port']
+        protocol = configs['protocol']
+
+        _token = File.read("#{Rails.root}/tmp/token")
+        headers = {
+            content_type: 'application/json',
+            token: _token
+        }
+       
+        test_name = test_name.gsub(" ","_")    
+      
+        status = 'failed' if status == 'fail'
+        status = 'voided' if status == 'void'
+        data = {
+                :tracking_number => tracking_number,
+                :test_status => status,
+                :test_name => test_name,     
+                :who_updated => who_updated,
+                :results => { }
+        }
+
+        url = "#{protocol}://#{host}:#{port}#{prefix}update_test"        
+        res = JSON.parse(RestClient.post(url,data,headers))        
+        return res
+    end
+
     def self.retrieve_test_details(test_name)
         configs = YAML.load_file "#{Rails.root}/config/nlims_service.yml"
         host = configs['host']
