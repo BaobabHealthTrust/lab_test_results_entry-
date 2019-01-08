@@ -92,16 +92,22 @@
                 <div class="col-sm-6" style="border-left: thin solid lightgrey;">
                     <table class="table">
                         <tr> <td  colspan="2" style="font-weight: bold; font-size:120%;background-color:lightgrey"> Test Results </td></tr>
-                        <% @test_values.each do |t| %>
-                            <% next if t.blank? %>
-                            <% test_name = t.split("-")[0] %>
-                            <% test_name = test_name.gsub("perc","%") %>
-                            <% test_name = test_name.gsub("hash","#") %>
-                            <% test_value = t.split("-")[1] %>
-                                <tr>
-                                    <td> <span style="font-weight: bold"> <%= test_name %>: </span></td>
-                                    <td> <span style="font-weight: bold"> <%= test_value %> </span> </td>
-                                </tr>
+                        <% if !@test_values.blank? %>
+                            <% @test_values.each do |t| %>
+                                <% next if t.blank? %>
+                                <% test_name = t.split("-")[0] %>
+                                <% test_name = test_name.gsub("perc","%") %>
+                                <% test_name = test_name.gsub("hash","#") %>
+                                <% test_value = t.split("-")[1] %>
+                                    <tr>
+                                        <td> <span style="font-weight: bold"> <%= test_name %>: </span></td>
+                                        <td> <span style="font-weight: bold"> <%= test_value %> </span> </td>
+                                    </tr>
+                            <% end %>
+                        <% else %>
+                            <tr>
+                                <td> <span style="font-weight: bold;color:red"> No test results </span></td>                                
+                            </tr>
                         <% end %>
                     </table>
                 </div>              

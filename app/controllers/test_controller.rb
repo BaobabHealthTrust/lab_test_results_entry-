@@ -1,8 +1,12 @@
 require 'test_service'
 class TestController < ApplicationController
-
+  VOIDED = 'voided'
+  PASS   = 'verified'
+  FAILED = 'failed'
   def index
-    
+
+         
+
         @patient_id = params[:patient_id]
         @patient_name = params[:patient_name]
         @patient_gender = params[:patient_gender]
@@ -12,7 +16,23 @@ class TestController < ApplicationController
         @sample_type = params[:sample_type]
         @test = params[:tests]
         @date_ordered = params[:date_created].to_date rescue nil    
+        @disable = false
 
+        res = TestService.check_test_status(@accession_number)
+       
+          status = res[0]
+        
+          if status.values.join("") == VOIDED
+            @checker = [true,'action not posible to complete, as test is voided']
+            @disable = 'true'
+          elsif status.values.join("") == PASS
+            @checker = [true,'action not posible to complete, as test passed']
+            @disable = 'true'
+          elsif status.values.join("") == FAILED
+            @checker = [true,'action not posible to complete, as test failed']
+            @disable = 'true'
+          end
+        
   end
 
 
@@ -52,6 +72,8 @@ class TestController < ApplicationController
     render plain: res[0].to_json and return
   end
 
+  
+
   def update_test_status
     status = params[:status]
     test_name = params[:test]
@@ -80,7 +102,7 @@ class TestController < ApplicationController
       end
 
       @test_values = params[:test_values]
-      @test_values = @test_values.split("_")
+      @test_values = @test_values.split("_") if !@test_values.blank?
       @patient_id = params[:patient_id]
       @patient_name = params[:patient_name]
       @patient_gender = params[:patient_gender]

@@ -28,6 +28,32 @@ module TestService
 
     end
 
+    def self.check_test_status(tracking_number)
+        configs = YAML.load_file "#{Rails.root}/config/nlims_service.yml"
+        host = configs['host']
+        prefix = configs['prefix']
+        port = configs['port']
+        protocol = configs['protocol']
+
+        _token = File.read("#{Rails.root}/tmp/token")
+        headers = {
+            content_type: 'application/json',
+            token: _token
+        }
+       
+        url = "#{protocol}://#{host}:#{port}#{prefix}query_test_status/#{tracking_number}"
+        puts "----------------"
+        puts tracking_number
+        puts url
+        res = JSON.parse(RestClient.get(url,headers))
+        if res['error'] == false
+            return res['data']
+        else
+            return 'false'
+        end
+
+    end
+
     def self.save_results(tracking_number_,test_name_,results_,who_updated)
         configs = YAML.load_file "#{Rails.root}/config/nlims_service.yml"
         host = configs['host']

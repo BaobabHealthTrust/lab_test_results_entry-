@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get  '/test/confirmation'             => 'test#confirmation'
   post '/user/authenticate'             => 'user#authenticate'
   get  '/user/log_out'                  => 'user#log_out'
+  
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
