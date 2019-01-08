@@ -40,11 +40,12 @@ class TestController < ApplicationController
     test_name = params[:test_name]   
     test_name = test_name.gsub("AND","&")
    
+    
     who_updated = {
-                'id_number': '1',
-                'phone_number': '2939393',
-                'first_name': 'gibo',
-                'last_name': 'malolo'
+                'id_number': session[:user][1],
+                'phone_number': '',
+                'first_name': session[:user][2],
+                'last_name': session[:user][3]
     }
       
     res = TestService.save_results(tracking_number,test_name,results,who_updated)
@@ -57,10 +58,10 @@ class TestController < ApplicationController
     tracking_number = params[:tracking_number]
     
     who_updated = {
-      'id_number': '1',
-      'phone_number': '2939393',
-      'first_name': 'gibo',
-      'last_name': 'malolo'
+      'id_number': session[:user][1],
+      'phone_number': '',
+      'first_name': session[:user][2],
+      'last_name': session[:user][3]
     }
 
     res = TestService.update_test_status(tracking_number,test_name,status,who_updated)
