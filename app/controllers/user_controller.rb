@@ -4,9 +4,20 @@ class UserController < ApplicationController
       @prompt = true      
     end
 
-    if params[:confirmation] == 'true' || params[:confirmation] == 'false'
+    if !params[:confirmation].blank? && params[:confirmation] != nil
+      
       @confirmation = params[:confirmation]      
-    end
-   
+    end   
+  end
+ 
+  def log
+
+  end
+
+  def authenticate
+    username = params[:username]
+    password = params[:password]
+
+
   end
 end

@@ -16,11 +16,14 @@ module TestService
         }
        
         url = "#{protocol}://#{host}:#{port}#{prefix}query_order_by_tracking_number/#{tracking_number}"
+        puts "----------------"
+        puts tracking_number
+        puts url
         res = JSON.parse(RestClient.get(url,headers))
         if res['error'] == false
             return res['data']
         else
-            return false
+            return 'false'
         end
 
     end
@@ -77,7 +80,7 @@ module TestService
         }
        
         test_name = test_name.gsub(" ","_")    
-      
+    
         status = 'failed' if status == 'fail'
         status = 'voided' if status == 'void'
         data = {

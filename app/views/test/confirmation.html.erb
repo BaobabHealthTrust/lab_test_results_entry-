@@ -1,0 +1,117 @@
+
+<div class="col-sm-12" style="margin-top: 1%;">
+    <% if @prompt == true %>   
+            <div class="col-sm-offset-2 col-sm-8 alert alert-success" id='confirmation'>
+                <button type="button" class="close" data-dismiss="modal" onclick="document.getElementById('confirmation').style.display='none'" >&times;</button>
+                <p style="color:green;font-weight:bold;font-size:130%;">results successfuly saved </p>
+            </div>
+    <% end %>
+
+    <% if @prompt == false %>
+        <div class="col-sm-offset-2 col-sm-8 alert alert-danger" id='confirmation_error'>
+            <button type="button" class="close" data-dismiss="modal" onclick="document.getElementById('confirmation_error').style.display='none'" >&times;</button>
+            <p style="color:red;font-weight:bold;font-size:130%;">results update unsuccessfuly saved </p>
+        </div>
+    <% end %>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-1  col-sm-6">
+        <div class="row" style='margin-bottom: 3%;margin-top:2%;'>
+        
+                <div class="col-sm-offset-3 col-sm-6" style="border-left: thin solid lightgrey;">
+                    <table class="table">
+                        <tr> <td  colspan="2" style="font-weight: bold; font-size:120%;background-color:lightgrey"> Patient Information </td></tr>
+                        <tr>
+                            <td> <span style="font-weight: bold"> Patient Id: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @patient_id %> </span> </td>
+                        </tr>
+                        <tr>
+                            <td> <span style="font-weight: bold"> Patient Gender: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @patient_gender%> </span> </td>
+                        </tr>             
+                        <tr>
+                            <td> <span style="font-weight: bold"> Patient Name: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @patient_name %> </span> </td>
+                        </tr>
+                        <tr>
+                            <td> <span style="font-weight: bold"> Patient DOB: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @patient_DOB %> </span> </td>
+                        </tr>     
+                    </table>
+                </div>  
+            
+        </div> 
+
+
+        <div class="row" style='margin-bottom: 3%;margin-top:2%;'>
+        
+                <div class="col-sm-offset-3 col-sm-6" style="border-left: thin solid lightgrey;">
+                    <table class="table">
+                        <tr> <td  colspan="2" style="font-weight: bold; font-size:120%;background-color:lightgrey"> Order Details </td></tr>
+                        <tr>
+                            <td> <span style="font-weight: bold"> Accession Number: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @accession_number  %> </span> </td>
+                        </tr>
+                        <tr>
+                            <td> <span style="font-weight: bold"> Sample Type: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @sample_type   %> </span> </td>
+                        </tr>  
+                        <tr>
+                            <td> <span style="font-weight: bold"> Date Ordered: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @date_ordered %>  </span> </td>
+                        </tr>     
+                    </table>
+                </div>  
+            
+        </div> 
+
+
+        <div class="row" style='margin-bottom: 3%;margin-top:2%;'>
+        
+                <div class="col-sm-offset-3 col-sm-6" style="border-left: thin solid lightgrey;">
+                    <table class="table">
+                        <tr> <td  colspan="2" style="font-weight: bold; font-size:120%;background-color:lightgrey"> Test Details </td></tr>
+                        <tr>
+                            <td> <span style="font-weight: bold"> Test: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @test  %> </span> </td>
+                        </tr>
+                        <tr>
+                            <td> <span style="font-weight: bold"> Test Status: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @test_status  %> </span> </td>
+                        </tr>             
+                    
+                    </table>
+                </div>      
+        </div> 
+    </div>
+
+    <div class="col-sm-5">
+        <div class="row" style='margin-bottom: 3%;margin-top:2%;'>
+        
+                <div class="col-sm-6" style="border-left: thin solid lightgrey;">
+                    <table class="table">
+                        <tr> <td  colspan="2" style="font-weight: bold; font-size:120%;background-color:lightgrey"> Test Results </td></tr>
+                        <% @test_values.each do |t| %>
+                            <% next if t.blank? %>
+                            <% test_name = t.split("-")[0] %>
+                            <% test_name = test_name.gsub("perc","%") %>
+                            <% test_name = test_name.gsub("hash","#") %>
+                            <% test_value = t.split("-")[1] %>
+                                <tr>
+                                    <td> <span style="font-weight: bold"> <%= test_name %>: </span></td>
+                                    <td> <span style="font-weight: bold"> <%= test_value %> </span> </td>
+                                </tr>
+                        <% end %>
+                    </table>
+                </div>              
+        </div> 
+    </div>
+
+    
+</div>
+
+
+<div class="col-sm-offset-2 col-sm-8" style="margin-top: 1%;border-top: thin solid lightgrey; padding-top: 1%;" >
+    <input type="button" value="done" class="btn btn-lg btn-success" onclick="window.location='/user/index'" >
+</div>  

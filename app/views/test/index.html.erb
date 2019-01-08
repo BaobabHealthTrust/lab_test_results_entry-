@@ -54,7 +54,7 @@
                     async: false,
                     success: function(res){
                         
-                        window.location = '/?confirmation=true';
+                        window.location = '/user/index?confirmation=true';
                     },
                     error: function(err){
                         document.getElementById("confirmation_error").style.display = 'inline';
@@ -69,7 +69,7 @@
                     async: false,
                     success: function(res){
                        
-                        window.location = '/?confirmation=true';
+                        window.location = '/user/index?confirmation=true';
                     },
                     error: function(err){
                         document.getElementById("confirmation_error").style.display = 'inline';
@@ -85,6 +85,7 @@
         var test_name       =  '<%= @test %>';
         test_name = test_name.replace("&amp;","AND")
         var values = {};
+        var v ="";
 
         var _url = '/test/save_results?test_name=' + test_name + "&tracking_number=" + tracking_number;
         
@@ -92,8 +93,12 @@
         {  
             var value = document.getElementById(measure_names[i]).value;
             values[measure_names[i]] = value;
+            measure_names[i] = measure_names[i].replace("%",'perc');
+            measure_names[i] = measure_names[i].replace("#",'hash');
+            v = v + "_" + measure_names[i] +"-"+ value;
         }
 
+        
         jQuery.ajax({
                 url: _url,
                 async: false,
@@ -103,7 +108,8 @@
                     
                     document.getElementById("test_measures").style.display = 'none';
                     document.getElementById("resultSaving").style.display = 'none';
-                    window.location = '/?confirmation=true';
+                    window.location = '/test/confirmation?confirmation=true' + "&test_status=Pass" + "&sample_type=" + '<%= @sample_type %>' + "&specimen_status=" + "--" + "&date_created=" +  '<%= @date_ordered %>' + "&tests=" + '<%= @test %>' + "&patient_id=" + '<%=  @patient_id %>' + "&patient_name=" + '<%=  @patient_name%>'+ "&patient_gender=" + '<%=  @patient_gender %>' + "&patient_DOB=" + '<%=  @patient_DOB %>' + "&tracking_number=" + '<%= @accession_number %>' + "&test_values=" + v;
+
                     console.log(r);
                 },
                 error: function(err)
@@ -112,8 +118,8 @@
                     console.log(r);
                 }
         });
-  
-
+                
+        
     }
 
 </script>
@@ -165,15 +171,7 @@
         </div>
     </div>
 
-    <div class="col-sm-12" style="margin-top: 1%;">
-        <div class="col-sm-offset-2 col-sm-8 alert alert-success" id='confirmation' style="display:none;" >
-            <p style="color:green;font-weight:bold;font-size:130%;">results successfuly saved </p>
-        </div>
-        <div class="col-sm-offset-2 col-sm-8 alert alert-danger" id='confirmation_error' style="display:none;" >
-            <p style="color:red;font-weight:bold;font-size:130%;">results update unsuccessfuly saved </p>
-        </div>
-    </div>
-
+    
     <div class="col-sm-12" style="margin-top: 1%;">
         <div class='row'>
             <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4 " style=" height:500px;padding-top:0.3%;display: none;  overflow: scroll;" id="resultEntering">
@@ -184,7 +182,7 @@
             </div>   
         </div>
         <div class="col-sm-offset-2 col-sm-8" style="margin-top: 1%;border-top: thin solid lightgrey; padding-top: 1%;" >
-            <input type="button" value="back" class="btn btn-lg btn-danger" onclick="window.location='/'" >
+            <input type="button" value="back" class="btn btn-lg btn-danger" onclick="window.location='/user/index'" >
             <input type="button" value="save" class="btn btn-lg btn-success" onclick="saveMeasures()" id="resultSaving" style="display:none;">
         </div>
 

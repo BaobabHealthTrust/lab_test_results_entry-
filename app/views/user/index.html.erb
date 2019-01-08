@@ -10,38 +10,53 @@
                 </div>
             </div>
            
-            <% if @prompt %>
-                <div class="col-sm-4" style="border-left: thin solid red;margin-top:1.5%;">
-                    <p style="color:red;font-weight: bold;">Order for specified accession number not found </p>
+           
+                <div class="col-sm-4" style="border-left: thin solid red;margin-top:1.5%;display:none;" id='prompt' >
+                    <p style="color:red;font-weight: bold;">Order for specified accession number not found or not yet assigned specimen type</p>
                 </div>
-            <% end %>
+           
             
         </div>
     </div>
 
 </div>
 
-<div class="col-sm-12" style="margin-top: 1%;">
-    <% if @confirmation == 'true' %>
-        <div class="col-sm-offset-2 col-sm-8 alert alert-success" id='confirmation' " >
-            <button type="button" class="close" data-dismiss="modal" onclick="document.getElementById('confirmation').style.display='none'" >&times;</button>
-            <p style="color:green;font-weight:bold;font-size:130%;">results successfuly saved </p>
-        </div>
-    <% else %>
-        <div class="col-sm-offset-2 col-sm-8 alert alert-danger" id='confirmation_error'" >
-            <button type="button" class="close" data-dismiss="modal" onclick="document.getElementById('confirmation_error').style.display='none'" >&times;</button>
-            <p style="color:red;font-weight:bold;font-size:130%;">results update unsuccessfuly saved </p>
-        </div>
-    <% end %>
-</div>
-
 <script type="text/javascript">
 
-    function retrievOrder(tracking_number)
-    {
+    function retrievOrder()
+    {   
         var tracking_number = document.getElementById('tracking_number').value;
+        var _url = "/test/retrieve_order?tracking_number=" + tracking_number;
+        jQuery.ajax({
+                url: _url,
+                async: false,
+                success: function(res)
+                {   
+                    var details = JSON.parse(res);  
+                    console.log("checking");
+                    console.log(details);
+                    if (details == 'false'){
+                        document.getElementById('prompt').style.display = 'inline';
+                    }
+                    else{
+                        sample_type =  details['other']['sample_type'];
+                        specimen_status = details['other']['specimen_status'];
+                        date_created = details['other']['date_created'];
+                        tests = Object.keys(details['tests']);
+                        
+                        patient_id = details['other']['patient']['id'];
+                        patient_name = details['other']['patient']['name'];
+                        patient_gender = details['other']['patient']['gender'];
+                        patient_DOB = details['other']['patient']['DOB'];
 
-        window.location = '/test/index?tracking_number=' + tracking_number;
+                        window.location = '/test/index?sample_type=' + sample_type + "&specimen_status=" + specimen_status + "&date_created=" +  date_created + "&tests=" + tests + "&patient_id=" + patient_id + "&patient_name=" + patient_name + "&patient_gender=" + patient_gender + "&patient_DOB=" + patient_DOB + "&tracking_number=" + tracking_number;
+                    }
+                },
+                error: function(err)
+                {
+                    console.log(err.responseText);
+                }
+        })
     }
 
 </script>

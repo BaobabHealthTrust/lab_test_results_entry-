@@ -2,32 +2,25 @@ require 'test_service'
 class TestController < ApplicationController
 
   def index
-    tracking_number = params[:tracking_number]
-    re = TestService.retrieve_order(tracking_number)
-    if re != false
-      data = re
-     
-      @patient_id = data['other']['patient']['id']
-      @patient_name = data['other']['patient']['name']
-      @patient_gender = data['other']['patient']['gender']
-      @patient_DOB = data['other']['patient']['DOB']
+    
+        @patient_id = params[:patient_id]
+        @patient_name = params[:patient_name]
+        @patient_gender = params[:patient_gender]
+        @patient_DOB = params[:patient_DOB]
 
-      @accession_number = tracking_number
-      @sample_type = data['other']['sample_type']
-      @test = data['tests'].keys[0]
-      @date_ordered = data['other']['date_created'].to_date
-    else
-      redirect_to '/?error=' + 'Order for specified accession number not found' 
-    end
+        @accession_number = params[:tracking_number]
+        @sample_type = params[:sample_type]
+        @test = params[:tests]
+        @date_ordered = params[:date_created].to_date rescue nil    
 
   end
 
 
   def retrieve_order
-    tracking_number = params[:tracking_number]
+    tracking_number = params[:tracking_number]   
     re = TestService.retrieve_order(tracking_number)
-    raise re.inspect
-
+   
+    render plain: re.to_json and return
   end
 
   def retrieve_test_details
@@ -78,5 +71,26 @@ class TestController < ApplicationController
     end
     render plain: msg and return
   end 
+
+  def confirmation
+
+      if !params[:confirmation].blank?
+          @prompt = true
+      end
+
+      @test_values = params[:test_values]
+      @test_values = @test_values.split("_")
+      @patient_id = params[:patient_id]
+      @patient_name = params[:patient_name]
+      @patient_gender = params[:patient_gender]
+      @patient_DOB = params[:patient_DOB]
+
+      @accession_number = params[:tracking_number]
+      @sample_type = params[:sample_type]
+      @test = params[:tests]
+      @date_ordered = params[:date_created].to_date rescue nil    
+      @test_status = params[:test_status]
+
+  end
 
 end
