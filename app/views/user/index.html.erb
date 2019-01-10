@@ -5,7 +5,7 @@
             <div class="col-sm-4">
                 <div class="form-group">
                     <label> Enter Assission Number </label>
-                    <input type="text" name="tracking_number" class="form-control" style="width: 70%;margin-bottom:1%" id="tracking_number">
+                    <input type="text" name="tracking_number"  class="form-control" style="width: 70%;margin-bottom:1%" id="tracking_number">
                     <input type="button" value='search' class='btn btn-primary' style="display:inline" onclick="retrievOrder()">
                     <input type="button" value='log out' class='btn btn-danger' style="display:inline" onclick="window.location='/user/log_out'">
                 </div>
@@ -23,6 +23,24 @@
 </div>
 
 <script type="text/javascript">
+
+    function focusForBarcodeInput(){
+        var barcode = document.getElementById("tracking_number");
+        if (barcode) 
+        barcode.focus();
+
+    }
+
+    function barcodeScan(){
+        usertext=document.getElementById("tracking_number");
+        if (usertext.value.match(/.+\$$/i) != null){	  	
+        usertext.value=usertext.value.substring(0,usertext.value.length -1);
+            retrievOrder();       
+        }
+    }
+
+  setInterval("focusForBarcodeInput();",300);
+  setInterval("barcodeScan();",300);
 
     function retrievOrder()
     {   
