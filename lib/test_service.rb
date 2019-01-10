@@ -16,16 +16,14 @@ module TestService
         }
        
         url = "#{protocol}://#{host}:#{port}#{prefix}query_order_by_tracking_number/#{tracking_number}"
-        puts "----------------"
-        puts tracking_number
-        puts url
+     
         res = JSON.parse(RestClient.get(url,headers))
         if res['error'] == false
             return res['data']
         else
             return 'false'
         end
-
+        
     end
 
     def self.check_test_status(tracking_number)
@@ -145,4 +143,30 @@ module TestService
             return false
         end
     end
+
+
+    def self.retrieve_test_results(tracking_number)
+        configs = YAML.load_file "#{Rails.root}/config/nlims_service.yml"
+        host = configs['host']
+        prefix = configs['prefix']
+        port = configs['port']
+        protocol = configs['protocol']
+
+        _token = File.read("#{Rails.root}/tmp/token")
+        headers = {
+            content_type: 'application/json',
+            token: _token
+        }
+       
+
+        url = "#{protocol}://#{host}:#{port}#{prefix}query_results_by_tracking_number/#{tracking_number}"
+        
+        res = JSON.parse(RestClient.get(url,headers))
+        if res['error'] == false
+            return res['data']
+        else
+            return false
+        end
+    end
+
 end

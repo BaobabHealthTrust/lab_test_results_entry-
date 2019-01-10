@@ -1,131 +1,11 @@
 <% disable = 'no' %>
+<% data = {} %>
+
 <script type="text/javascript">
-    var measure_names = [];
-    function captureStatus(sta)
-    {
-        var status = sta;
-        var tracking_number =  '<%= @accession_number %>';
-        var test_name_       =  '<%= @test %>';
-
-        if (status == 'Pass')
-        {   document.getElementById("test_measures").innerHTML = "";
-            document.getElementById("resultEntering").style.display = 'block';
-            document.getElementById("resultSaving").style.display = 'inline';
-            var n =  '<%= @test %>';
-            n = n.replace("&amp;","AND");
-            var _url = '/test/retrieve_test_details?test='+ n;
-            var tr = document.getElementById("test_measures");
-
-            jQuery.ajax({
-                    url: _url,
-                    async: false,
-                    success: function(res){
-                        var measures = JSON.parse(res);
-                        var counter = 0;
-                        for(var i  in measures)
-                        {
-                            var name =  measures[i]
-                            measure_names.push(name);
-                            var row = tr.insertRow(counter);
-                            var cel = row.insertCell(0);
-                            cel.innerHTML = name;
-                            
-                            var x = document.createElement("INPUT");
-                            x.setAttribute('class','form-control');
-                            x.setAttribute('width','80%');
-                            x.setAttribute('id',name);
-                            var cel = row.insertCell(1);
-                            cel.appendChild(x);
-
-                            counter++;
-                        }
-                    },
-                    error: function(err){   
-                        console.log(err);
-                    }
-            });
-               
-        }
-        else if (status == "fail") 
-        {       
-            var _url = '/test/update_test_status?test=' + test_name_ + "&tracking_number=" + tracking_number + "&status=fail";
-            jQuery.ajax({
-                    url: _url,
-                    async: false,
-                    success: function(res){
-                        
-                        document.getElementById("test_measures").style.display = 'none';
-                        document.getElementById("resultSaving").style.display = 'none';
-                        window.location = '/test/confirmation?confirmation=true' + "&test_status=Failed" + "&sample_type=" + '<%= @sample_type %>' + "&specimen_status=" + "--" + "&date_created=" +  '<%= @date_ordered %>' + "&tests=" + '<%= @test %>' + "&patient_id=" + '<%=  @patient_id %>' + "&patient_name=" + '<%=  @patient_name%>'+ "&patient_gender=" + '<%=  @patient_gender %>' + "&patient_DOB=" + '<%=  @patient_DOB %>' + "&tracking_number=" + '<%= @accession_number %>';
-
-                    },
-                    error: function(err){
-                        document.getElementById("confirmation_error").style.display = 'inline';
-                    }
-            });
-        }  
-        else if (status == "void")
-        {
-            var _url = '/test/update_test_status?test=' + test_name_ + "&tracking_number=" + tracking_number + "&status=void";
-            jQuery.ajax({
-                    url: _url,
-                    async: false,
-                    success: function(res){
-                       
-                        document.getElementById("test_measures").style.display = 'none';
-                        document.getElementById("resultSaving").style.display = 'none';
-                        window.location = '/test/confirmation?confirmation=true' + "&test_status=Voided" + "&sample_type=" + '<%= @sample_type %>' + "&specimen_status=" + "--" + "&date_created=" +  '<%= @date_ordered %>' + "&tests=" + '<%= @test %>' + "&patient_id=" + '<%=  @patient_id %>' + "&patient_name=" + '<%=  @patient_name%>'+ "&patient_gender=" + '<%=  @patient_gender %>' + "&patient_DOB=" + '<%=  @patient_DOB %>' + "&tracking_number=" + '<%= @accession_number %>';
-
-                    },
-                    error: function(err){
-                        document.getElementById("confirmation_error").style.display = 'inline';
-                    }
-            });
-        }
-    }
+    
+   
    
 
-    function saveMeasures()
-    {
-        var tracking_number =  '<%= @accession_number %>';
-        var test_name       =  '<%= @test %>';
-        test_name = test_name.replace("&amp;","AND")
-        var values = {};
-        var v ="";
-
-        var _url = '/test/save_results?test_name=' + test_name + "&tracking_number=" + tracking_number;
-        
-        for (var i in measure_names)
-        {  
-            var value = document.getElementById(measure_names[i]).value;
-            values[measure_names[i]] = value;
-            measure_names[i] = measure_names[i].replace("%",'perc');
-            measure_names[i] = measure_names[i].replace("#",'hash');
-            v = v + "_" + measure_names[i] +"-"+ value;
-        }
-
-        
-        jQuery.ajax({
-                url: _url,
-                async: false,
-                data: {data: values},
-                success: function(res)
-                {  r = JSON.parse(res);
-                    
-                    document.getElementById("test_measures").style.display = 'none';
-                    document.getElementById("resultSaving").style.display = 'none';
-                    window.location = '/test/confirmation?confirmation=true' + "&test_status=Pass" + "&sample_type=" + '<%= @sample_type %>' + "&specimen_status=" + "--" + "&date_created=" +  '<%= @date_ordered %>' + "&tests=" + '<%= @test %>' + "&patient_id=" + '<%=  @patient_id %>' + "&patient_name=" + '<%=  @patient_name%>'+ "&patient_gender=" + '<%=  @patient_gender %>' + "&patient_DOB=" + '<%=  @patient_DOB %>' + "&tracking_number=" + '<%= @accession_number %>' + "&test_values=" + v;
-
-                    console.log(r);
-                },
-                error: function(err)
-                {
-                    r = JSON.parse(err);
-                    console.log(r);
-                }
-        });               
-        
-    }
 
 
 </script>
@@ -136,67 +16,152 @@
 
     <div class="col-sm-12" style='border-bottom: thin solid lightgrey; border-top: thin solid lighthrey; padding-left:3.3%;padding-top:-1%;'>
         <div class='row'>
-            <div class="col-sm-2">
+                
+            <div class="col-sm-4" style="border-left: thin solid lightgrey;">
+                <table class="table">
+                    <tr>
+                        <td> <span style="font-weight: bold"> Patient Id: </span> <br> <span> <%=  @patient_id %></span> </td>
+                        <td> <span style="font-weight: bold"> Patient Gender: </span> <br>  <span> <%=  @patient_gender %></span> </td>
+                    </tr>
+                    <tr>
+                        <td> <span style="font-weight: bold"> Patient Name: </span> <br>  <span> <%= @patient_name %> </span> </td>
+                        <td> <span style="font-weight: bold"> Patient DOB:  </span> <br>  <span> <%= @patient_DOB %></span> </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-sm-4"  style="border-left: thin solid lightgrey;">
+                <table class="table">
+                    <tr>
+                        <td> <span style="font-weight: bold"> Specimen Type: </span><br> <span> <%= @sample_type %> </span> </td>
+                        <td> <span style="font-weight: bold"> Test Ordered: </span><br> <span> <%= @test %> </span> </td>
+                    </tr>
+                    <tr>
+                        <td> <span style="font-weight: bold"> Accession Number: </span> <br>  <span> <%= @accession_number %> </span> </td>
+                        <td> <span style="font-weight: bold"> Date Ordered:  </span> <br>  <span> <%= @date_ordered %> </span> </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-sm-4"  style="border-left: thin solid lightgrey;">
+                <table class="table">
+                    <tr>
+                        <td> <span style="font-weight: bold"> Sample Requested By: </span> <br>  <span> <%= @requested_by %> </span> </td>
+                        <td> <span style="font-weight: bold"> Sample Collected By: </span> <br>  <span> <%= @collected_by %> </span> </td>
+                    </tr>
+                    <tr>
+                        <td> <span style="font-weight: bold"> Target Lab: </span> <br>  <span> <%= @target_lab  %> </span> </td>
                     
-                        <div class="form-group" >
-                            <label> Order Status</label>
-                            <select class="form-control" style="width: 40%;" id="tt_s">
-                                <option onclick="captureStatus(this.value)"  value="Pass">Pass</option>
-                                <option data-toggle="modal" data-target="#fail" value="Fail">Fail</option>
-                                <option data-toggle="modal" data-target="#void" value="Void">Void</option>
-                            </select>                            
-                        </div>
-                 
-            </div>
-      
-            <div class="col-sm-5" style="border-left: thin solid lightgrey;">
-                <table class="table">
-                    <tr>
-                        <td> <span style="font-weight: bold"> Patient Id: </span><span> <%=  @patient_id %></span> </td>
-                        <td> <span style="font-weight: bold"> Patient Gender: </span><span> <%=  @patient_gender %></span> </td>
-                    </tr>
-                    <tr>
-                        <td> <span style="font-weight: bold"> Patient Name: </span> <span> <%= @patient_name %> </span> </td>
-                        <td> <span style="font-weight: bold"> Patient DOB:  </span> <span> <%= @patient_DOB %></span> </td>
                     </tr>
                 </table>
             </div>
-
-            <div class="col-sm-5"  style="border-left: thin solid lightgrey;">
-                <table class="table">
-                    <tr>
-                        <td> <span style="font-weight: bold"> Specimen Type: </span><span> <%= @sample_type %> </span> </td>
-                        <td> <span style="font-weight: bold"> Test Ordered: </span><span> <%= @test %> </span> </td>
-                    </tr>
-                    <tr>
-                        <td> <span style="font-weight: bold"> Accession Number: </span> <span> <%= @accession_number %> </span> </td>
-                        <td> <span style="font-weight: bold"> Date Ordered:  </span> <span> <%= @date_ordered %> </span> </td>
-                    </tr>
-                </table>
-            </div>
-
+        
         </div>
     </div>
     <% if @checker == nil %>
       
+
+        <div class="col-sm-offset-2 col-sm-4 " style="border-top: thin solid lightgrey; margin-top: 2%;padding-top:1%;" >
+            <table class="table">
+                <thead> 
+                    <tr> 
+                        <th>Test Name   </th>
+                        <th>Test Status </th>
+                        <th>Date Result </th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                    <% @tests.each do |t| %>    
+                        <% data[t[0]]= t[3] if t[4]== true %>             
+                        <tr>
+                            <td><%= t[0] %></td>
+                            <td><%= t[1] %></td>
+                            <td><%= t[2] %></td>
+                            <td> 
+                                <% if t[1] == 'verified' || t[1] == 'failed' || t[1] =='voided' %> 
+                                    <input type="button" value="view result" onclick="viewResult('<%= t[0] %>'); setTest('<%= t[0] %>'); document.getElementById('lbl').innerHTML='Viewing Results for <%= t[0] %>'">
+                                    <input  type="button"   value="edit result" onclick="editResult('<%= t[0] %>'); setTest('<%= t[0] %>'); document.getElementById('lbl').innerHTML='Editing Results for <%= t[0] %>'">
+                                <% else %>
+                                    <input  type="button"   value="enter result" onclick="enterResult('<%= t[0] %>'); document.getElementById('lbl').innerHTML='Selected <%= t[0] %> for results entering'" >
+                                <% end %>
+                            </td>
+                        </tr>                      
+                    <% end %>
+                  
+                </tbody>
+
+            </table>
+        </div>
+
+        <div class="col-sm-4" style="border-left: thin solid lightgrey; border-top: thin solid lightgrey;margin-top: 2%;display:none;padding-top:1%;" id='results_panel'>
+            <div class="row" >
+                <div class="col-sm-12"> 
+                    <p id='lbl' style="color: blue;font-weight: bold"> </p>
+                </div>  
+                <div class="col-sm-6" >
+                    <label> Test Status</label>
+                    <select class="form-control" style="width: 100%;" id="tt_s">
+                        <option onclick="captureStatus(this.value)"  value="Pass">Pass</option>
+                        <option data-toggle="modal" data-target="#fail" value="Fail">Fail</option>
+                        <option data-toggle="modal" data-target="#void" value="Void">Void</option>
+                    </select>                            
+                </div>
+                <div class="col-sm-6" >
+                    <label> Result Date</label>
+                    <select class="form-control" style="width: 100%;" id="tt_s">
+                        <option onclick="captureStatus(this.value)"  value="Pass">Pass</option>
+                        <option data-toggle="modal" data-target="#fail" value="Fail">Fail</option>
+                        <option data-toggle="modal" data-target="#void" value="Void">Void</option>
+                    </select>                            
+                </div>
+            </div>
+            <div class="row" style="border-top: thin solid lightgrey; margin-top:5%; height: 400px;  overflow: scroll">
+                <table class="table" id="test_measures">
+                      
+                </table>
+            </div>
+        </div>
+
+
+
     <% elsif @checker[0] == true %>
         
         <div class="col-sm-offset-2 col-sm-8 alert alert-danger" style="margin-top:1%;" id='confirmation_error'>
             <button type="button" class="close" data-dismiss="modal" onclick="document.getElementById('confirmation_error').style.display='none'" >&times;</button>
-            <p style="color:red;font-weight:bold;font-size:130%;"> <%= @checker[1] %> </p>
+            <p style="color:red;font-weight:bold;font-size:130%;"> <%= "" %> </p>
         </div>
+
+
+        <div class="col-sm-offset-2 col-sm-8 ">
+            <table class="table">
+                <tr> <td  colspan="5" style="font-weight: bold; font-size:120%;background-color:lightgrey"> Test Details </td></tr>
+                <tr> <th>Test Name</th>
+                    <th>Test Value</th>
+                    <th>Test Name</th>
+                </tr>
+                <tbody>
+                    <% @tests.each do |t| %>
+                        <%= raise t.inspect %>
+                        <tr>
+                            <td> <span style="font-weight: bold"> Test: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @test  %> </span> </td>
+                            <td> <span style="font-weight: bold"> Test Status: </span></td>
+                            <td> <span style="font-weight: bold"> <%= @test_status  %> </span> </td>
+                            <td> <input type='button' value='edit'> </td>
+                        </tr>   
+                    <% end %>            
+                </tbody>
+            </table>
+
+
+        </div>
+
     <% end %>
 
     <div class="col-sm-12" style="margin-top: 1%;">
-        <div class='row'>
-            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4 " style=" height:500px;padding-top:0.3%;display: none;  overflow: scroll;" id="resultEntering">
-                    <table class="table" id="test_measures">
-                    
-                        
-                    </table>
-            </div>   
-        </div>
-        <div class="col-sm-offset-2 col-sm-8" style="margin-top: 1%;border-top: thin solid lightgrey; padding-top: 1%;" >
+       
+        <div class="col-sm-offset-2 col-sm-8" style="margin-top: 0%;border-top: thin solid lightgrey; padding-top: 1%;" >
             <input type="button" value="back" class="btn btn-lg btn-danger" onclick="window.location='/user/index'" >
             <input type="button" value="save" class="btn btn-lg btn-success" onclick="saveMeasures()" id="resultSaving" style="display:none;">
         </div>
@@ -250,6 +215,7 @@
 
 </div>
 
+
 <script type="text/javascript">
     function disable(){
         var tt = '<%=  @disable  %>';
@@ -260,5 +226,224 @@
         }     
 
     }
+
+    var sel_test = "";
+
+    function viewResult(test_name)
+    {
+        var results = '<%= raw data.to_json %>';
+        results = JSON.parse(results);
+        var tr = document.getElementById("test_measures");
+        var counter = 0;
+        document.getElementById("test_measures").innerHTML = "";
+        document.getElementById('results_panel').style.display = "block";
+        for (var i in results[test_name])
+        { 
+            if(i == 'result_date'){
+
+            }
+            else{
+                            var v_name = results[test_name][i];
+                
+                            var name =  i;
+                            measure_names.push(name);
+                            var row = tr.insertRow(counter);
+                            var cel = row.insertCell(0);
+                            cel.innerHTML = name;
+                            
+                            var x = document.createElement("INPUT");
+                            x.value = v_name;
+                            x.disabled = true;
+                            x.setAttribute('class','form-control');
+                            x.setAttribute('width','80%');
+                            x.setAttribute('id',name);
+                            var cel = row.insertCell(1);
+                            cel.appendChild(x);
+                            counter = counter + 1;
+            }
+
+        }
+    }
+    
+
+    function enterResult(tst){
+        document.getElementById('results_panel').style.display = "block";
+        sel_test = tst;
+        
+    }
+
+
+    function setTest(tst)
+    {
+        sel_test = tst;
+    }
+
+    function editResult(test_name)
+    {  
+        var results = '<%= raw data.to_json %>';
+        results = JSON.parse(results);
+        var tr = document.getElementById("test_measures");
+        var counter = 0;
+        document.getElementById("test_measures").innerHTML = "";
+        document.getElementById('results_panel').style.display = "block";
+        for (var i in results[test_name])
+        { 
+            if(i == 'result_date'){
+
+            }
+            else{
+                            var v_name = results[test_name][i];
+                
+                            var name =  i;
+                            measure_names.push(name);
+                            var row = tr.insertRow(counter);
+                            var cel = row.insertCell(0);
+                            cel.innerHTML = name;
+                            
+                            var x = document.createElement("INPUT");
+                            x.value = v_name;
+                         
+                            x.setAttribute('class','form-control');
+                            x.setAttribute('width','80%');
+                            x.setAttribute('id',name);
+                            var cel = row.insertCell(1);
+                            cel.appendChild(x);
+                            counter = counter + 1;
+            }
+
+        }
+    }
+
+
     disable();
+
+
+    var measure_names = [];
+    function captureStatus(sta)
+    {
+        var status = sta;
+        var tracking_number =  '<%= @accession_number %>';
+        var test_name_       =  sel_test;
+
+        if (status == 'Pass')
+        {   document.getElementById("test_measures").innerHTML = "";
+            document.getElementById("resultSaving").style.display = 'inline';
+            var n =  sel_test;
+            n = n.replace("&amp;","AND");
+            var _url = '/test/retrieve_test_details?test='+ n;
+            var tr = document.getElementById("test_measures");
+
+            jQuery.ajax({
+                    url: _url,
+                    async: false,
+                    success: function(res){
+                        var measures = JSON.parse(res);
+                        var counter = 0;
+                        for(var i  in measures)
+                        {
+                            var name =  measures[i]
+                            measure_names.push(name);
+                            var row = tr.insertRow(counter);
+                            var cel = row.insertCell(0);
+                            cel.innerHTML = name;
+                            
+                            var x = document.createElement("INPUT");
+                            x.setAttribute('class','form-control');
+                            x.setAttribute('width','80%');
+                            x.setAttribute('id',name);
+                            var cel = row.insertCell(1);
+                            cel.appendChild(x);
+
+                            counter++;
+                        }
+                    },
+                    error: function(err){   
+                        console.log(err);
+                    }
+            });
+               
+        }
+        else if (status == "fail") 
+        {    
+        
+            var _url = '/test/update_test_status?test=' + test_name_ + "&tracking_number=" + tracking_number + "&status=fail";
+            jQuery.ajax({
+                    url: _url,
+                    async: false,
+                    success: function(res){
+                        
+                        document.getElementById("test_measures").style.display = 'none';
+                        document.getElementById("resultSaving").style.display = 'none';
+                        window.location = '/test/confirmation?confirmation=true' + "&test_status=Failed" + "&sample_type=" + '<%= @sample_type %>' + "&specimen_status=" + "--" + "&date_created=" +  '<%= @date_ordered %>' + "&tests=" + '<%= @test %>' + "&patient_id=" + '<%=  @patient_id %>' + "&patient_name=" + '<%=  @patient_name%>'+ "&patient_gender=" + '<%=  @patient_gender %>' + "&patient_DOB=" + '<%=  @patient_DOB %>' + "&tracking_number=" + '<%= @accession_number %>';
+
+                    },
+                    error: function(err){
+                        console.log(err.responseText);
+                    }
+            });
+        }  
+        else if (status == "void")
+        {
+            var _url = '/test/update_test_status?test=' + test_name_ + "&tracking_number=" + tracking_number + "&status=void";
+            jQuery.ajax({
+                    url: _url,
+                    async: false,
+                    success: function(res){
+                       
+                        document.getElementById("test_measures").style.display = 'none';
+                        document.getElementById("resultSaving").style.display = 'none';
+                        window.location = '/test/confirmation?confirmation=true' + "&test_status=Voided" + "&sample_type=" + '<%= @sample_type %>' + "&specimen_status=" + "--" + "&date_created=" +  '<%= @date_ordered %>' + "&tests=" + '<%= @test %>' + "&patient_id=" + '<%=  @patient_id %>' + "&patient_name=" + '<%=  @patient_name%>'+ "&patient_gender=" + '<%=  @patient_gender %>' + "&patient_DOB=" + '<%=  @patient_DOB %>' + "&tracking_number=" + '<%= @accession_number %>';
+
+                    },
+                    error: function(err){
+                        console.log(err.responseText);
+                    }
+            });
+        }
+    }
+
+
+
+
+    function saveMeasures()
+    { 
+        var tracking_number =  '<%= @accession_number %>';
+        var test_name       =  sel_test;
+        test_name = test_name.replace("&amp;","AND")
+        var values = {};
+        var v ="";
+
+        var _url = '/test/save_results?test_name=' + test_name + "&tracking_number=" + tracking_number;
+        
+        for (var i in measure_names)
+        {  
+            var value = document.getElementById(measure_names[i]).value;
+            values[measure_names[i]] = value;
+            measure_names[i] = measure_names[i].replace("%",'perc');
+            measure_names[i] = measure_names[i].replace("#",'hash');
+            v = v + "_" + measure_names[i] +"-"+ value;
+        }
+
+        
+        jQuery.ajax({
+                url: _url,
+                async: false,
+                data: {data: values},
+                success: function(res)
+                {  r = JSON.parse(res);
+                    
+                    document.getElementById("test_measures").style.display = 'none';
+                    document.getElementById("resultSaving").style.display = 'none';
+                    window.location = '/test/confirmation?confirmation=true' + "&test_status=Pass" + "&sample_type=" + '<%= @sample_type %>' + "&specimen_status=" + "--" + "&date_created=" +  '<%= @date_ordered %>' + "&tests=" + '<%= @test %>' + "&patient_id=" + '<%=  @patient_id %>' + "&patient_name=" + '<%=  @patient_name%>'+ "&patient_gender=" + '<%=  @patient_gender %>' + "&patient_DOB=" + '<%=  @patient_DOB %>' + "&tracking_number=" + '<%= @accession_number %>' + "&test_values=" + v;
+
+                    console.log(r);
+                },
+                error: function(err)
+                {
+                    r = JSON.parse(err);
+                    console.log(r);
+                }
+        });               
+        
+    }
 </script>

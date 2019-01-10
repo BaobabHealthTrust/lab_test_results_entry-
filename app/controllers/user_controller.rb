@@ -4,11 +4,7 @@ class UserController < ApplicationController
     if params[:error]
       @prompt = true      
     end
-
-    if !params[:confirmation].blank? && params[:confirmation] != nil
-      
-      @confirmation = params[:confirmation]      
-    end   
+ 
   end
  
   def log

@@ -12,6 +12,10 @@ class TestController < ApplicationController
         @patient_gender = params[:patient_gender]
         @patient_DOB = params[:patient_DOB]
 
+        @collected_by = params[:collected_by]
+        @requested_by = params[:requested_by]
+        @target_lab = params[:target_lab]
+
         @accession_number = params[:tracking_number]
         @sample_type = params[:sample_type]
         @test = params[:tests]
@@ -19,20 +23,33 @@ class TestController < ApplicationController
         @disable = false
 
         res = TestService.check_test_status(@accession_number)
+        results = TestService.retrieve_test_results(@accession_number)
+      
+        if results == false
+          @tests = res.collect do |k|
+                      tst_name = k.keys
+                      status = k[k.keys.join("")]
+                      [tst_name.join(""),status,'no result','',false] if status == 'drawn' || status == 'Drawn'
+                      [tst_name.join(""),status,status,{'result': status},true] if status != 'drawn' || status != 'Drawn'
+                      
+                  end
+        else            
+            
+            rst = results
+          @tests = res.collect do |k|
+                tst_name = k.keys
+                status = k[k.keys.join("")]
+                if !results['results'][tst_name.join("")].blank?
+                  [tst_name.join(""),status,results['results'][tst_name.join("")]['result_date'],results['results'][tst_name.join("")],true]
+                else
+                    [tst_name.join(""),status,'no result','',false] if status == 'drawn' || status == 'Drawn'
+                    [tst_name.join(""),status,status,{'result': status},true] if status != 'drawn' || status != 'Drawn'
+                end
+              end
+        end
+
+      
        
-          status = res[0]
-        
-          if status.values.join("") == VOIDED
-            @checker = [true,'action not posible to complete, as test is voided']
-            @disable = 'true'
-          elsif status.values.join("") == PASS
-            @checker = [true,'action not posible to complete, as test passed']
-            @disable = 'true'
-          elsif status.values.join("") == FAILED
-            @checker = [true,'action not posible to complete, as test failed']
-            @disable = 'true'
-          end
-        
   end
 
 

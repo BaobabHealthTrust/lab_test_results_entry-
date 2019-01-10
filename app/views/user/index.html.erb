@@ -43,14 +43,19 @@
                         sample_type =  details['other']['sample_type'];
                         specimen_status = details['other']['specimen_status'];
                         date_created = details['other']['date_created'];
-                        tests = Object.keys(details['tests']);
-                        
+                        tests = Object.keys(details['tests']);;
+                    
                         patient_id = details['other']['patient']['id'];
                         patient_name = details['other']['patient']['name'];
                         patient_gender = details['other']['patient']['gender'];
                         patient_DOB = details['other']['patient']['DOB'];
 
-                        window.location = '/test/index?sample_type=' + sample_type + "&specimen_status=" + specimen_status + "&date_created=" +  date_created + "&tests=" + tests + "&patient_id=" + patient_id + "&patient_name=" + patient_name + "&patient_gender=" + patient_gender + "&patient_DOB=" + patient_DOB + "&tracking_number=" + tracking_number;
+                        collected_by = details["other"]['sample_created_by']['name'];
+                        requesting_clinician = details["other"]['requested_by'];
+                        target_lab  = details["other"]['receiving_lab'];
+
+                        window.location = '/test/index?sample_type=' + sample_type + "&collected_by=" + collected_by + "&requested_by=" +requesting_clinician + "&target_lab=" + target_lab + "&specimen_status=" + specimen_status + "&date_created=" +  date_created + "&tests=" + tests + "&patient_id=" + patient_id + "&patient_name=" + patient_name + "&patient_gender=" + patient_gender + "&patient_DOB=" + patient_DOB + "&tracking_number=" + tracking_number;
+                    
                     }
                 },
                 error: function(err)
