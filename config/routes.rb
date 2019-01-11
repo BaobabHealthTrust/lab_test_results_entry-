@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   get  '/test/confirmation'             => 'test#confirmation'
   post '/user/authenticate'             => 'user#authenticate'
   get  '/user/log_out'                  => 'user#log_out'
+  get  '/test/dispatcher'               => 'test#dispatcher'
+  get  '/test/sample_dispatch'          => 'test#sample_dispatch'
+  get  '/test/dispatch'                 => 'test#save_dispatch'
   
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

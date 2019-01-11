@@ -144,6 +144,34 @@ module TestService
         end
     end
 
+    def self.dispatch(tracking_number,dispatcher_name)
+        configs = YAML.load_file "#{Rails.root}/config/nlims_service.yml"
+        host = configs['host']
+        prefix = configs['prefix']
+        port = configs['port']
+        protocol = configs['protocol']
+
+        _token = File.read("#{Rails.root}/tmp/token")
+        headers = {
+            content_type: 'application/json',
+            token: _token
+        }
+       
+        data = {
+            'tracking_number': tracking_number,
+            'dispatcher_first': dispatcher_name.split("_")[0],
+            'dispatcher_last': dispatcher_name.split("_")[1]
+        }
+
+        url = "#{protocol}://#{host}:#{port}#{prefix}dispatch_sample"
+        
+        res = JSON.parse(RestClient.post(url,data,headers))
+        if res['error'] == false
+            return res['data']
+        else
+            return false
+        end
+    end
 
     def self.retrieve_test_results(tracking_number)
         configs = YAML.load_file "#{Rails.root}/config/nlims_service.yml"

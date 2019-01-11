@@ -16,8 +16,8 @@
                 <% if @log_in != true %> <a class="navbar-brand" href="#" style="color: white;font-weight:bold;">Test Results Entry</a> <% end %>
               </div>
               <ul class="nav navbar-nav">
-              <% if @log_in != true %>   <li class="active"><a href="#">Enter Results</a></li> <% end %>
-               
+                  <% if @log_in != true %>   <li class="active"><a href="#">Enter Results</a></li> <% end %>
+                  <% if @log_in != true %>   <li class="active"><a href="/test/dispatcher">Sample Dispatching</a></li> <% end %>
               </ul>
             </div>
           </nav>

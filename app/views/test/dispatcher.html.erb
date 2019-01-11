@@ -1,0 +1,72 @@
+<div class='row'>
+
+    <div class="col-sm-12" style='border-bottom: thin solid lightgrey; border-top: thin solid lighthrey; padding-left:3.3%;padding-top:-20%;'>
+        <div class='row' >
+            <div class="col-sm-4" style="border-right: thin solid lightgrey">                
+                <div class="form-group">
+                    <label> Dispatcher First Name </label>
+                    <input type="text" name="f_name"  class="form-control" style="width: 70.1%;margin-bottom:1%" id="f_name">
+                    <label> Dispatcher Last Name </label>
+                    <input type="text" name="l_name"  class="form-control" style="width: 70.1%;margin-bottom:1%" id="l_name">
+
+                   
+                    <input type="button" value='log out' class='btn btn-danger' style="display:inline" onclick="window.location='/user/log_out'">
+                    <input type="button" value='next' class='btn btn-primary' style="display:inline" onclick="next()">
+                </div>
+            </div>                        
+        </div>
+    </div>
+   
+</div>
+
+<script type="text/javascript">
+
+    function next()
+    {
+        var name = document.getElementById('f_name').value + "_" + document.getElementById("l_name").value;
+        window.location = '/test/sample_dispatch?dispatcher_name=' + name;
+    }
+
+
+    function retrievOrder()
+    {   
+        var tracking_number = document.getElementById('tracking_number').value;
+        var _url = "/test/retrieve_order?tracking_number=" + tracking_number;
+        jQuery.ajax({
+                url: _url,
+                async: false,
+                success: function(res)
+                {   
+                    var details = JSON.parse(res);  
+                    console.log("checking");
+                    console.log(details);
+                    if (details == 'false'){
+                        document.getElementById('prompt').style.display = 'inline';
+                    }
+                    else{
+                        sample_type =  details['other']['sample_type'];
+                        specimen_status = details['other']['specimen_status'];
+                        date_created = details['other']['date_created'];
+                        tests = Object.keys(details['tests']);;
+                    
+                        patient_id = details['other']['patient']['id'];
+                        patient_name = details['other']['patient']['name'];
+                        patient_gender = details['other']['patient']['gender'];
+                        patient_DOB = details['other']['patient']['DOB'];
+
+                        collected_by = details["other"]['sample_created_by']['name'];
+                        requesting_clinician = details["other"]['requested_by'];
+                        target_lab  = details["other"]['receiving_lab'];
+
+                        window.location = '/test/index?sample_type=' + sample_type + "&collected_by=" + collected_by + "&requested_by=" +requesting_clinician + "&target_lab=" + target_lab + "&specimen_status=" + specimen_status + "&date_created=" +  date_created + "&tests=" + tests + "&patient_id=" + patient_id + "&patient_name=" + patient_name + "&patient_gender=" + patient_gender + "&patient_DOB=" + patient_DOB + "&tracking_number=" + tracking_number;
+                    
+                    }
+                },
+                error: function(err)
+                {
+                    console.log(err.responseText);
+                }
+        })
+    }
+
+</script>
