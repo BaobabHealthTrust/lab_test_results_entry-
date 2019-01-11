@@ -51,8 +51,29 @@ class TestController < ApplicationController
       
        
   end
+  def save_dispatch
+      tracking_number = params[:tracking_number]
+      dispatcher = params[:dispatcher]
+    
+      res = TestService.dispatch(tracking_number,dispatcher)
+      if !res = false
+          render plain: 'true' and return
+      else
+          render plain: 'false' and return
+      end
+  end
+
+  def sample_dispatch
+      @dispatcher_f_name = params[:dispatcher_name].split("_")[0]
+      @dispatcher_s_name = params[:dispatcher_name].split("_")[1]
+
+  end
 
 
+  def dispatcher
+  
+  end
+  
   def retrieve_order
     tracking_number = params[:tracking_number]   
     re = TestService.retrieve_order(tracking_number)

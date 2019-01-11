@@ -1,0 +1,177 @@
+<div class='row'>
+
+    <div class="col-sm-12" style='border-bottom: thin solid lightgrey; border-top: thin solid lighthrey; padding-left:3.3%;padding-top:-20%;'>
+        <div class='row' >
+          
+            <div class="col-sm-4" style="margin-top:1%;display:block; border-right: thin solid lightgrey" id='prompt' >
+                <label> Scan Accession NUmber </label>
+                <input type="text" name="tracking_number"  class="form-control" style="width: 70.1%;margin-bottom:1%" id="tracking_number">     
+                <input type="button" value='another dispatcher' class='btn btn-primary' style="display:inline;margin-bottom: 1%;" onclick="window.location='/test/dispatcher'">
+                <input type="button" value='view' class='btn btn-success' style="display:inline;margin-bottom: 1%;" onclick="retrievOrder()">           
+            </div>
+            <div class="col-sm-4" style="margin-top:1%;display:block;" id='prompt' >
+                <table class="table"> 
+                    <tr>
+                        <td style='font-weight:bold' >Dispatcher First Name: <span id='f_name'> <%= @dispatcher_f_name %> </span> </td>
+                    </tr>
+                    <tr>
+                        <td style='font-weight:bold' >Dispatcher Last Name: <span id='l_name'> <%= @dispatcher_s_name %> </span> </td>
+                    </tr>
+                </table>        
+            </div>
+
+           
+            
+        </div>
+    </div>
+    <div class="col-sm-offset-2 col-sm-8 "> <h4> <span id='info' style="display:none;"></span> </h4></div>
+    <div class="col-sm-offset-2 col-sm-8 " style=" margin-top: 1%;padding-top:1%;display:none" id="data">
+            <h4 style="border-bottom: thin solid lightgrey"> Order Details  </h4>
+            <div class="col-sm-12">
+                <div class='col-sm-offset-2 col-sm-6'>
+                    <table class="table">     
+                        <tbody> 
+                        <tr>    
+                                <td style='text-align:right;border-top: font-weight: "bold";'>Patient Id:</td> 
+                                <td style'border-left: thin solid lightgrey' id='pa_id'></td>
+                        </tr>
+                        <tr>
+                                <td style='text-align:right;border-top: font-weight: "bold";'>Patient Name:</td> 
+                                <td style'border-left: thin solid lightgrey' id='pa_name'></td>
+                        </tr>
+                        <tr>    
+                                <td style='text-align:right;border-top: font-weight: "bold";'>Test Name:</td> 
+                                <td style'border-left: thin solid lightgrey' id='test_name'></td>
+                        </tr>
+                        <tr>    
+                                <td style='text-align:right;border-top: font-weight: "bold";'>Specimen Type:</td> 
+                                <td  style'border-left: thin solid lightgrey'  id="sp_id" ></td>
+                        </tr>
+                        <tr>    
+                                <td style='text-align:right;border-top: font-weight: "bold";'>Date Drawn :</td> 
+                                <td  style'border-left: thin solid lightgrey'  id="date_drawn"></td>
+                        </tr>
+                        <tr>    
+                                <td style='text-align:right;border-top: font-weight: "bold";'>Target Lab:</td> 
+                                <td  style'border-left: thin solid lightgrey' id="target_lab"></td>
+                        </tr>
+                        <tr>    
+                                <td style='text-align:right;border-top: font-weight: "bold";'>Sample Requested By:</td> 
+                                <td  style'border-left: thin solid lightgrey'  id="sample_req"></td>
+                        </tr>
+                        <tr>     
+                                <td style='text-align:right;border-top: font-weight: "bold";'>Sample Collected by:</td> 
+                                <td  style'border-left: thin solid lightgrey'  id="sample_coll"></td>
+                        </tr>
+                        <tbody>
+                    </table>
+                </div>
+            </div>
+    </div>
+    <div class="col-sm-offset-2 col-sm-8" style="margin-top: 0%;border-top: thin solid lightgrey; padding-top: 1%;" >
+        <input type="button" value="back" class="btn btn-lg btn-danger" onclick="window.location='/test/dispatcher'" >
+        <input type="button" value="dispatch" class="btn btn-lg btn-success" onclick="dispatchSample()" id="resultSaving" style="display:none;">
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function dispatchSample(){
+        var tracking_number = document.getElementById('tracking_number').value;
+        var _url = '/test/dispatch?tracking_number=' + tracking_number + "&dispatcher=" +  document.getElementById('f_name').innerHTML +"_"+ document.getElementById('l_name').innerHTML;
+        jQuery.ajax({
+                    url: _url,
+                    success: function(res){
+                        
+                        var tt = document.getElementById('info');
+                        tt.style.display = 'inline';
+                        
+                        if (res == 'true')
+                        {
+                            tt.innerHTML = 'sample dispatch successfuly done !!!!';
+                            tt.style.color = 'green';
+                            document.getElementById("resultSaving").style.display = 'none';
+                        }
+                        else
+                        {
+                            tt.innerHTML = 'sample dispatch unsuccessfuly done !!!!';
+                            tt.style.color = 'red';
+                            document.getElementById("resultSaving").style.display = 'none';
+                        }
+                        document.getElementById("data").style.display = 'none';
+                    },
+                    error: function(err){
+                        console.log(err);
+                    }
+        });         
+
+    }
+
+    function focusForBarcodeInput(){
+        var barcode = document.getElementById("tracking_number");
+        if (barcode) 
+        barcode.focus();
+
+    }
+
+    function barcodeScan(){
+        usertext=document.getElementById("tracking_number");
+        if (usertext.value.match(/.+\$$/i) != null){	  	
+        usertext.value=usertext.value.substring(0,usertext.value.length -1);
+            retrievOrder();       
+        }
+    }
+
+  setInterval("focusForBarcodeInput();",300);
+  setInterval("barcodeScan();",300);
+
+    function retrievOrder()
+    {   var tt = document.getElementById('info').style.display = 'none';
+        var tracking_number = document.getElementById('tracking_number').value;
+        var _url = "/test/retrieve_order?tracking_number=" + tracking_number;
+        jQuery.ajax({
+                url: _url,
+                async: false,
+                success: function(res)
+                {   
+                    var details = JSON.parse(res);  
+                    console.log("checking");
+                    console.log(details);
+                    if (details == 'false'){
+                        document.getElementById('prompt').style.display = 'inline';
+                    }
+                    else{
+                        sample_type =  details['other']['sample_type'];
+                        specimen_status = details['other']['specimen_status'];
+                        date_created = details['other']['date_created'];
+                        tests = Object.keys(details['tests']);;
+                    
+                        patient_id = details['other']['patient']['id'];
+                        patient_name = details['other']['patient']['name'];
+                        patient_gender = details['other']['patient']['gender'];
+                        patient_DOB = details['other']['patient']['DOB'];
+
+                        collected_by = details["other"]['sample_created_by']['name'];
+                        requesting_clinician = details["other"]['requested_by'];
+                        target_lab  = details["other"]['receiving_lab'];
+                        
+                        document.getElementById("pa_id").innerHTML = patient_id;
+                        document.getElementById("pa_name").innerHTML = patient_name;
+                        document.getElementById("test_name").innerHTML = tests;
+                        document.getElementById("sp_id").innerHTML = sample_type;
+                        document.getElementById("date_drawn").innerHTML = date_created;
+                        document.getElementById("target_lab").innerHTML = target_lab;
+                        document.getElementById("sample_req").innerHTML = requesting_clinician;
+                        document.getElementById("sample_coll").innerHTML = collected_by;
+                        document.getElementById("data").style.display = 'block';
+                        document.getElementById("resultSaving").style.display = 'inline';
+                    }
+                },
+                error: function(err)
+                {
+                    console.log(err.responseText);
+                }
+        })
+    }
+
+</script>
