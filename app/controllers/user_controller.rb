@@ -11,6 +11,9 @@ class UserController < ApplicationController
       if !params[:error].blank?
         @error = params[:error]
       end
+      config = YAML.load_file("#{Rails.root}/config/application.yml")
+
+      @app_name = config['facility_name']
       @log_in = true
   end
 
