@@ -145,12 +145,14 @@
                     console.log(details);
                     if (details == true ){
                         document.getElementById("data").style.display = 'none';
+                        document.getElementById('not_available').style.display = 'none';
                         document.getElementById("resultSaving").style.display = 'none';
                         document.getElementById('already').style.display = 'block';
                     }
                     else{
                         if (details == 'false' ) {
                             document.getElementById("data").style.display = 'none';
+                            document.getElementById('already').style.display = 'none';
                             document.getElementById("resultSaving").style.display = 'none';
                             document.getElementById('not_available').style.display = 'block';
                         }else{

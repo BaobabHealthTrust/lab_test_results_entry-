@@ -45,7 +45,7 @@
     function retrievOrder()
     {   
         var tracking_number = document.getElementById('tracking_number').value;
-        var _url = "/test/retrieve_order?tracking_number=" + tracking_number;
+        var _url = "/test/retrieve_order?tracking_number=" + tracking_number + "&checking=true";
         jQuery.ajax({
                 url: _url,
                 async: false,
