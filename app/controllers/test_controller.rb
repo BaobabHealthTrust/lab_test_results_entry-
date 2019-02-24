@@ -76,9 +76,18 @@ class TestController < ApplicationController
   
   def retrieve_order
     tracking_number = params[:tracking_number]   
-    re = TestService.retrieve_order(tracking_number)
-   
-    render plain: re.to_json and return
+    if params[:checking]
+      re = TestService.retrieve_order(tracking_number)  
+      render plain: re.to_json and return
+    else
+      r = TestService.check_if_dispatched(tracking_number)
+      if r == false
+        re = TestService.retrieve_order(tracking_number)  
+        render plain: re.to_json and return
+      else
+        render plain: r.to_json and return
+      end
+    end
   end
 
   def retrieve_test_details

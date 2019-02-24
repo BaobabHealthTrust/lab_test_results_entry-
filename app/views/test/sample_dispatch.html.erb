@@ -68,6 +68,12 @@
                 </div>
             </div>
     </div>
+    <div class="col-sm-offset-2 col-sm-8"  id="already" style="display:none">
+            <span style="color:red;font-weight:bold;"> Order already dispatched </span>
+    </div>
+    <div class="col-sm-offset-2 col-sm-8"  id="not_available" style="display:none;">
+        <span style="color:red;font-weight:bold;"> Order not available </span>
+    </div>
     <div class="col-sm-offset-2 col-sm-8" style="margin-top: 0%;border-top: thin solid lightgrey; padding-top: 1%;" >
         <input type="button" value="back" class="btn btn-lg btn-danger" onclick="window.location='/test/dispatcher'" >
         <input type="button" value="dispatch" class="btn btn-lg btn-success" onclick="dispatchSample()" id="resultSaving" style="display:none;">
@@ -137,35 +143,48 @@
                     var details = JSON.parse(res);  
                     console.log("checking");
                     console.log(details);
-                    if (details == 'false'){
-                        document.getElementById('prompt').style.display = 'inline';
+                    if (details == true ){
+                        document.getElementById("data").style.display = 'none';
+                        document.getElementById('not_available').style.display = 'none';
+                        document.getElementById("resultSaving").style.display = 'none';
+                        document.getElementById('already').style.display = 'block';
                     }
                     else{
-                        sample_type =  details['other']['sample_type'];
-                        specimen_status = details['other']['specimen_status'];
-                        date_created = details['other']['date_created'];
-                        tests = Object.keys(details['tests']);;
-                    
-                        patient_id = details['other']['patient']['id'];
-                        patient_name = details['other']['patient']['name'];
-                        patient_gender = details['other']['patient']['gender'];
-                        patient_DOB = details['other']['patient']['DOB'];
+                        if (details == 'false' ) {
+                            document.getElementById("data").style.display = 'none';
+                            document.getElementById('already').style.display = 'none';
+                            document.getElementById("resultSaving").style.display = 'none';
+                            document.getElementById('not_available').style.display = 'block';
+                        }else{
 
-                        collected_by = details["other"]['sample_created_by']['name'];
-                        requesting_clinician = details["other"]['requested_by'];
-                        target_lab  = details["other"]['receiving_lab'];
-                        
-                        document.getElementById("pa_id").innerHTML = patient_id;
-                        document.getElementById("pa_name").innerHTML = patient_name;
-                        document.getElementById("test_name").innerHTML = tests;
-                        document.getElementById("sp_id").innerHTML = sample_type;
-                        document.getElementById("date_drawn").innerHTML = date_created;
-                        document.getElementById("target_lab").innerHTML = target_lab;
-                        document.getElementById("sample_req").innerHTML = requesting_clinician;
-                        document.getElementById("sample_coll").innerHTML = collected_by;
-                        document.getElementById("data").style.display = 'block';
-                        document.getElementById("resultSaving").style.display = 'inline';
+                            document.getElementById('not_available').style.display = 'none';
+                            document.getElementById('already').style.display = 'none';
+
+                            sample_type = details['other']['sample_type'];
+                            specimen_status = details['other']['specimen_status'];
+                            date_created = details['other']['date_created'];
+                            tests = Object.keys(details['tests']);;
+                            patient_id = details['other']['patient']['id'];
+                            patient_name = details['other']['patient']['name'];
+                            patient_gender = details['other']['patient']['gender'];
+                            patient_DOB = details['other']['patient']['DOB'];
+
+                            collected_by = details["other"]['sample_created_by']['name'];
+                            requesting_clinician = details["other"]['requested_by'];
+                            target_lab = details["other"]['receiving_lab'];
+                            document.getElementById("pa_id").innerHTML = patient_id;
+                            document.getElementById("pa_name").innerHTML = patient_name;
+                            document.getElementById("test_name").innerHTML = tests;
+                            document.getElementById("sp_id").innerHTML = sample_type;
+                            document.getElementById("date_drawn").innerHTML = date_created;
+                            document.getElementById("target_lab").innerHTML = target_lab;
+                            document.getElementById("sample_req").innerHTML = requesting_clinician;
+                            document.getElementById("sample_coll").innerHTML = collected_by;
+                            document.getElementById("data").style.display = 'block';
+                            document.getElementById("resultSaving").style.display = 'inline';
+                        }
                     }
+
                 },
                 error: function(err)
                 {

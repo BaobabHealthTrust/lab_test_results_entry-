@@ -109,11 +109,7 @@
                 </div>
                 <div class="col-sm-6" >
                     <label> Result Date</label>
-                    <select class="form-control" style="width: 100%;" id="tt_s">
-                        <option onclick="captureStatus(this.value)"  value="Pass">Pass</option>
-                        <option data-toggle="modal" data-target="#fail" value="Fail">Fail</option>
-                        <option data-toggle="modal" data-target="#void" value="Void">Void</option>
-                    </select>                            
+                    <input type='text' class="form-control" id='datetimepicker4' />                                             
                 </div>
             </div>
             <div class="row" style="border-top: thin solid lightgrey; margin-top:5%; height: 400px;  overflow: scroll">
@@ -228,6 +224,7 @@
     }
 
     var sel_test = "";
+    var measure_names = [];
 
     function viewResult(test_name)
     {
@@ -317,8 +314,9 @@
 
     disable();
 
+    $('#datetimepicker4').datetimepicker();
 
-    var measure_names = [];
+    
     function captureStatus(sta)
     {
         var status = sta;
