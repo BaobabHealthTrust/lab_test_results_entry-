@@ -2,16 +2,8 @@
 
     <div class="col-sm-12" style='border-bottom: thin solid lightgrey; border-top: thin solid lighthrey; padding-left:3.3%;padding-top:-1%;'>
         <div class='row' >
+          
             <div class="col-sm-4">
-                <div class="form-group">
-                    <label> Search By Accession Number </label>
-                    <input type="text" name="tracking_number"  class="form-control" style="width: 70.1%;margin-bottom:1%" id="tracking_number">
-                    <input type="button" value='search' class='btn btn-primary' style="display:inline" onclick="retrievOrder()">
-                   
-                </div>
-            </div>
-           
-            <div class="col-sm-4" style="border-left: thin solid black;">
                 <div class="form-group">
                     <label> Search By Patient ID </label>
                     <input type="text" name="patientID" class="form-control" style="width: 70.1%;margin-bottom:1%" id="patientID">
@@ -32,28 +24,22 @@
                 </div>
             </div>
 
-
-                <div class="col-sm-4" style="border-left: thin solid red;margin-top:1.5%;display:none;" id='prompt' >
-                    <p style="color:red;font-weight: bold;">Order for specified accession number not found or not yet assigned specimen type</p>
-                </div>
-           
             
         </div>
     </div>
-    <input type="button" value='log out' class='btn btn-danger' style="display:inline; margin-top:5%;margin-left:3%;" onclick="window.location='/user/log_out'">
-
+    
 </div>
 
 <script type="text/javascript">
 
     function searchPatient(searchOPtion){
-        console.log("hell");
+    
         var first = document.getElementById("patientName").value;
         var last = document.getElementById("lastName").value;
         var gender = document.getElementById("gender").value;
         var id = document.getElementById("patientID").value;
 
-        var url = "/user/search_patient?option=" + searchOPtion + "&first_name=" + first + "&last_name=" + last + "&gender=" + gender + "&id=" + id + "&create_order=false";
+        var url = "/user/search_patient?option=" + searchOPtion + "&first_name=" + first + "&last_name=" + last + "&gender=" + gender + "&id=" + id + "&create_order=true";
         jQuery.ajax({
             url: url,
             async: false,
@@ -75,7 +61,7 @@
     }
 
     function focusForBarcodeInput(){
-        var barcode = document.getElementById("tracking_number");
+        var barcode = document.getElementById("patientID");
         if (barcode)   function searchPatient(optionSearch){
             console.log("hell");
         }
@@ -84,15 +70,6 @@
     }
 
     function barcodeScan(){
-        usertext=document.getElementById("tracking_number");
-        if (usertext.value.match(/.+\$$/i) != null){	  	
-        usertext.value=usertext.value.substring(0,usertext.value.length -1);
-            retrievOrder();       
-        }
-    }
-
-
-    function barcodeScan_v2(){
         usertext=document.getElementById("patientID");
         if (usertext.value.match(/.+\$$/i) != null){	  	
         usertext.value=usertext.value.substring(0,usertext.value.length -1);
@@ -102,12 +79,11 @@
 
 
   setInterval("barcodeScan();",300);
-  setInterval("barcodeScan_v2();",300);
 
     function retrievOrder()
     {   
         var tracking_number = document.getElementById('tracking_number').value;
-        var _url = "/test/retrieve_order?tracking_number=" + tracking_number + "&checking=true" + "&create_order=false";
+        var _url = "/test/retrieve_order?tracking_number=" + tracking_number + "&checking=true" + "&create_order=true";
         jQuery.ajax({
                 url: _url,
                 async: false,

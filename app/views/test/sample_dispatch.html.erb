@@ -4,7 +4,7 @@
         <div class='row' >
           
             <div class="col-sm-4" style="margin-top:1%;display:block; border-right: thin solid lightgrey" id='prompt' >
-                <label> Scan Accession NUmber </label>
+                <label> Scan Accession Number </label>
                 <input type="text" name="tracking_number"  class="form-control" style="width: 70.1%;margin-bottom:1%" id="tracking_number">     
                 <input type="button" value='another dispatcher' class='btn btn-primary' style="display:inline;margin-bottom: 1%;" onclick="window.location='/test/dispatcher'">
                 <input type="button" value='view' class='btn btn-success' style="display:inline;margin-bottom: 1%;" onclick="retrievOrder()">           
@@ -139,7 +139,8 @@
                 url: _url,
                 async: false,
                 success: function(res)
-                {   
+                {  var num = document.getElementById("tracking_number");
+                    num.value = "";                
                     var details = JSON.parse(res);  
                     console.log("checking");
                     console.log(details);
@@ -184,7 +185,7 @@
                             document.getElementById("resultSaving").style.display = 'inline';
                         }
                     }
-
+                   
                 },
                 error: function(err)
                 {

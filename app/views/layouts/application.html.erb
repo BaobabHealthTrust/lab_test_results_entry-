@@ -16,13 +16,24 @@
                 <% if @log_in != true %> <a class="navbar-brand" href="#" style="color: white;font-weight:bold;">Test Results Entry</a> <% end %>
               </div>
               <ul class="nav navbar-nav">
-                  <% if @log_in != true %>   <li class="active"><a href="#">Enter Results</a></li> <% end %>
+                  <% if @log_in != true %>   <li class="active"><a href="/user/index" onclick="check(this.id)" id="result">Enter Results</a></li> <% end %>
                   <% if @log_in != true %>   <li class="active"><a href="/test/dispatcher">Sample Dispatching</a></li> <% end %>
+                  <% if @log_in != true %>   <li class="active"><a href="/user/patient_particulars">Create Order</a></li> <% end %>
               </ul>
             </div>
           </nav>
    
     <%= yield %>
   </body>
+
+  <script>
+    function check(ele)
+    {
+      var elmnt = document.getElementById(ele);
+      elmnt.style.color ="green";
+    }
+
+
+  </script>
 </html>
 
