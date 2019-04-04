@@ -81,12 +81,15 @@ class TestController < ApplicationController
     @state_province = params[:state_province]   
     identifier = ""   
       r = UserService.search_patient_identifiers_by_patient_id(@person_id,session[:user][0])
-      if r[0] == true
+    if r[0] == true
         r[1][0]['identifier']
         if r[1][0]['type']['patient_identifier_type_id'] == 3
             identifier = r[1][0]['identifier']
+       elsif r[1][1]['type']['patient_identifier_type_id'] == 3
+            identifier = r[1][1]['identifier']
         end
-      end    
+      end 
+   
     @test_cat = TestService.retrieve_test_catelog
     @target_lab = TestService.retrieve_target_labs
     @person_id = identifier
@@ -114,6 +117,8 @@ class TestController < ApplicationController
           r[1][0]['identifier']
           if r[1][0]['type']['patient_identifier_type_id'] == 3
               identifier = r[1][0]['identifier']
+	  elsif r[1][1]['type']['patient_identifier_type_id'] == 3
+              identifier = r[1][1]['identifier']
           end
         end
     end
