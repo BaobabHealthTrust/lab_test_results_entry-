@@ -1,0 +1,245 @@
+<div class='row'>
+
+    <div class="col-sm-12" style='border-bottom: thin solid lightgrey; border-top: thin solid lighthrey; padding-left:3.3%;padding-top:-1%;'>
+        <div class='row' >
+          <div style="width:95%;">
+                <span > <span style="font-weight:bold;">  Patient Name: </span> <%= @name%> </span>
+                <span style="border-left: thin solid black; margin-left:5%;padding-left: 5%;"> <span style="font-weight:bold;"> Gender: </span>  <%= @gender%> </span>
+                <span style="border-left: thin solid black; margin-left:5%;padding-left: 5%;"><span style="font-weight:bold;"> Birthdate: </span> <%= @birthdate%> </span>
+                <span style="border-left: thin solid black; margin-left:5%;padding-left: 5%;"><span style="font-weight:bold;">  Patient ID: </span>  <%= @person_id%></span>
+                <span style="border-left: thin solid black; margin-left:5%;padding-left: 5%;"><span style="font-weight:bold;">  State Province: </span> <%= @state_province%></span>
+          </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-12" style='border-bottom: thin solid lightgrey; border-top: thin solid lighthrey; padding-left:3.3%;padding-top:-1%; margin-top: 1%;'>
+   
+        <div class='row' >
+            <input type="button" class="btn btn-sm btn-danger" value ="cancel" style="margin-bottom:10px;" onclick="loadBack()">
+            <div class="row">
+                <div class="col-sm-5" style=";margin-left:5%;margin-right:5%">
+                    <form class="form">
+                        <label>Date Sample Drawn </label>
+                        <input type="date" name="date_sample_drawn" class="form-control" id="date_drawn">
+
+                        <label>Select Test </label>
+                        <select name="test_type" class="form-control" id="test_type" onclick="selectTest()"> 
+                            <% if !@test_cat.blank? %>
+                                <% @test_cat.keys.sort.each do |test| %>
+                                    <option value='<%= test %>'> <%= test %> </option>
+                                <% end %>
+                            <% end %>
+                        </select>
+
+                        <label>Select Sample Type</label>
+                        <select name="sample_type" class="form-control" id="sample_type">  </select>
+                        
+
+                        <label>Where Sample Processed</label>
+                        <select name="target_lab" class="form-control" id="target_lab">  
+                            <% if !@target_lab.blank? %>
+                                <% @target_lab.sort.each do |test| %>
+                                    <option value='<%= test %>'> <%= test %> </option>
+                                <% end %>
+                            <% end %>
+                        </select>
+
+                        <label>Reason For Test </label>
+                        <select name="priority" class="form-control" id="priority" onclick="selectTest()">                             
+                                    <option value='Targeted'> Targeted </option>  
+                                    <option value='Confirmatory'> Confirmatory </option>  
+                                    <option value='Routine'> Routine </option>  
+                                    <option value='Stat'> Stat </option>                              
+                        </select>
+
+                        <label>Requested by </label>
+                        <input type="text" class="form-control" name="requested_by" id="requested_by">
+
+                        <input type="button" class="btn btn-sm btn-success" value ="Save Order" style="margin-bottom:10px;margin-top:5%;" onclick="saveOrder()">
+                    </form>
+                
+                </div>
+                
+                 <div class="col-sm-3" style="margin-left:5%;margin-right:5%">
+                    
+                    <div style="display:none;border-left: thin solid black; border-bottom: thin solid black; padding: 5%;" id="disp">
+                        <p style="color:green;font-weight:bold;" id="alert">Order successfuly created!! </p>
+                        <div id="conf" style="display:none;">
+                            <p> Accession Number Given: <span id="accession_number" style="color:blue;font-weight:bold"> </span> </p>
+                            <input type="button" value="enter result" class="btn btn-primary btn-small" onclick="enterResult()" >
+                        </div>
+                    </div>
+                </div>
+                
+            <div>
+                
+        </div>
+    </div>
+        
+
+</div>
+
+
+<script>
+    function loadBack(){
+        window.location ="/user/index";
+    }
+    var measure_names = [];
+    var trackingNumber = "";
+    var testNam = ""
+
+    function selectTest(){
+
+        var test = document.getElementById("test_type").value;      
+        var sample = document.getElementById("sample_type");
+        sample.innerHTML = "";
+        var testCatelog = JSON.parse('<%= raw @test_cat.to_json %>');     
+        sampleType = testCatelog[test];
+        var option = document.createElement("option");
+        for (var i in sampleType){
+            option.innerHTML = sampleType[i];
+            option.setAttribute('value',sampleType[i]);
+        }
+
+        sample.appendChild(option);
+        
+    }
+
+    function saveOrder()
+    {
+        var date = document.getElementById("date_drawn").value;
+        var tst = document.getElementById("test_type").value;
+        var sample = document.getElementById("sample_type").value;
+        var requested = document.getElementById("requested_by").value;
+        var targer = document.getElementById("target_lab").value;
+        var priority = document.getElementById("priority").value;
+        var name = "<%= @name%>";
+        var birthdate = "<%= @birthdate%>";
+        var gender = "<%= @gender%>";
+        var id = "<%= @person_id%>";
+
+        if (date.length < 1 || tst.length < 1 || sample.length < 1 || requested.length < 1 || targer.length < 1 || priority.length < 1){
+            var d = document.getElementById("disp");
+            d.style.display = "block";
+            var alrt = document.getElementById("alert");
+            alrt.innerHTML = "";
+            alrt.innerHTML = "please make sure all fields are filled, value(s) missing from a field(s)";
+            alrt.style.color = "red";
+        }else{
+            var url = "/test/save_order?specimen_type=" + sample + "&date_drawn=" + date +"&test=" + tst + "&requesting_by=" + requested + "&target_lab=" + targer + "&priority=" + priority + "&name=" + name + "&gender=" + gender + "&id=" + id + "&birthdate=" + birthdate ;
+            jQuery.ajax({
+                url: url,
+                success: function(res){
+                    console.log(res);
+                    var r = JSON.parse(res);
+                    if (r[0] == true){
+                        console.log(r[1]);
+                        var d = document.getElementById("disp");
+                        d.style.display = "block";
+                        document.getElementById("conf").style.display = "block";
+                        var alrt = document.getElementById("alert");
+                        alrt.innerHTML = "";
+                        alrt.innerHTML = "Order successfuly created!!";
+                        alrt.style.color = "green";
+                        document.getElementById("accession_number").innerHTML =  r[1];
+                    }
+                },
+                error: function(res){
+
+                }
+            })
+        }
+
+    }
+
+
+
+    function enterResult(){
+        var person_id = '<%= @person_id%>';
+        var name = '<%= @name%>';
+        var birthdate = '<%= @birthdate%>';
+        var gender = '<%= @gender%>';
+        var city_village = "";
+        var state_province = '<%= @state_province%>';
+
+        var url = "/test/patient_home?person_id=" + person_id + "&name=" + name + "&birthdate=" + birthdate + "&gender=" + gender + "&city_village=" + city_village + "&state_province=" + state_province + "&create_order=true";
+        window.location = url;
+    }
+
+    function loadTestMeasures(testName,tracking_number){
+        trackingNumber = tracking_number;
+        testNam = testName;
+        var cap = document.getElementById("caption");
+        cap.innerHTML = "Entering Results For " + testName;
+        
+        var url = "/test/get_test_measures?test_name=" + testName;
+        var tr = document.getElementById("test_measures");
+        var counter = 0;
+     
+        jQuery.ajax({
+            url: url,
+            success: function(res){
+                data = JSON.parse(res);
+                for( var i in data){
+                    console.log(i);
+                            measureName = data[i];
+                            measure_names.push(measureName);
+                            var row = tr.insertRow(counter);
+                            var cel = row.insertCell(0);
+                            cel.innerHTML = measureName;                        
+                            var x = document.createElement("INPUT");                        
+                            x.setAttribute('class','form-control');
+                            x.setAttribute('width','80%');
+                            x.setAttribute('id',measureName);
+                            var cel = row.insertCell(1);
+                            cel.appendChild(x);
+                            counter = counter + 1;
+                }
+
+            },
+            error: function(err){
+
+            }
+        })
+
+    }
+
+    function saveResult()
+    {
+        var tracking_number =  trackingNumber;
+        var test_name       =  testNam;
+        test_name = test_name.replace("&amp;","AND")
+        var values = {};
+        var v ="";
+
+        var _url = '/test/save_results?test_name=' + test_name + "&tracking_number=" + tracking_number;
+        
+        for (var i in measure_names)
+        {  
+            var value = document.getElementById(measure_names[i]).value;
+            values[measure_names[i]] = value;
+            measure_names[i] = measure_names[i].replace("%",'perc');
+            measure_names[i] = measure_names[i].replace("#",'hash');
+            v = v + "_" + measure_names[i] +"-"+ value;
+        }
+
+        
+        jQuery.ajax({
+                url: _url,
+                async: false,
+                data: {data: values},
+                success: function(res)
+                {  r = JSON.parse(res);
+                    console.log("saved result");
+                    console.log(r);
+                    location.reload(); 
+                },
+                error: function(err)
+                {
+                    r = JSON.parse(err);
+                    console.log(r);
+                }
+        });             
+    }
+
+</script>

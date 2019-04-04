@@ -1,0 +1,89 @@
+<div class='row'>
+
+    <div class="col-sm-12" style='border-bottom: thin solid lightgrey; border-top: thin solid lighthrey; padding-left:3.3%;padding-top:-1%;'>
+        <div class='row' >
+            <input type="button" class="btn btn-sm btn-success" value ="Back" style="margin-bottom:10px;" onclick="loadBack()">
+            <h5 style="font-weight:bold;"> List of Found Patient(s), Click on record to select actual patient</h5>
+            <div>
+                <table class="table">
+                    <thead>
+                        <tr> 
+                            <th>Patient Name </th>
+                            <th>Date of Birth</th>
+                            <th>Gender</th>
+                            <th>City Village</th>
+                            <th>State Province</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if  @search_option == true %>
+                            <% if @data[0] == true %>
+                                <% @data[1].each do |data| %>
+                                  
+                                    <% person_id = data['person']['person_id'] %>
+                                    <%  gender = data['person']['gender'] %>
+                                    <%  birthdate = data['person']['birthdate'] %>
+                                    <%  name = data['person']['names'][0]['given_name'].to_s+" "+data['person']['names'][0]['family_name'].to_s %>
+                                    <%  city_village = data['person']['addresses'][0]['city_village'] %>
+                                    <%  state_province = data['person']['addresses'][0]['state_province'] %>
+                                    <tr onclick="viewDetails(this.id,'<%= name %>',' <%= birthdate %>','<%= gender %>','<%= city_village %>','<%= state_province %>')" id="<%= person_id %>">
+                                        <td> <%= name %>       </td>
+                                        <td> <%= birthdate %>       </td>
+                                        <td> <%= gender %>          </td>
+                                        <td> <%= city_village   %>  </td>
+                                        <td> <%= state_province %>  </td>
+                                    </tr>
+                                <% end %>
+                            <% else %>
+                                <tr style="color:red;"> <td colspan="4"> <p> no patient is found, please register patient in ART module </p> </td> <tr>
+                            <% end %>
+                        <% else %>
+                            <% if @data[0] == true %>
+                                <% @data[1].each do |data| %>
+                                    <% person_id = data['person_id'] %>
+                                    <%  gender = data['gender'] %>
+                                    <%  birthdate = data['birthdate'] %>
+                                    <%  name =  data['names'][0]['given_name'].to_s+" "+data['names'][0]['family_name'].to_s %>
+                                    <%  city_village = data['addresses'][0]['city_village'] %>
+                                    <%  state_province = data['addresses'][0]['state_province'] %>
+                                    <tr onclick="viewDetails(this.id,'<%= name %>',' <%= birthdate %>','<%= gender %>','<%= city_village %>','<%= state_province %>')" id="<%= person_id %>">
+                                        <td> <%= name %>       </td>
+                                        <td> <%= birthdate %>       </td>
+                                        <td> <%= gender %>          </td>
+                                        <td> <%= city_village   %>  </td>
+                                        <td> <%= state_province %>  </td>
+                                    </tr>
+                                <% end %>
+                            <% else %>
+                                <tr style="color:red;"> <td colspan="4"> <p> no patient is found, please register patient in ART module </p> </td> <tr>
+                            <% end %>
+                        <% end %>
+                    </tbody>    
+                </table>
+
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+
+        function viewDetails(person_id,name,birthdate,gender,city_village,state_province)
+        {   var create = '<%= @create_order %>';
+            console.log("create-----------");
+            console.log(create);      
+            if (create == 'true'){
+                var url = "/test/create_order?person_id=" + person_id + "&name=" + name + "&birthdate=" +birthdate + "&gender=" + gender + "&city_village=" + city_village + "&state_province=" + state_province;
+                window.location = url;                
+            }else{              
+                var url = "/test/patient_home?person_id=" + person_id + "&name=" + name + "&birthdate=" +birthdate + "&gender=" + gender + "&city_village=" + city_village + "&state_province=" + state_province;
+                window.location = url;
+            }
+        }
+
+        function loadBack(){
+            window.location = "/user/index";
+        }
+    </script>
+
+</div>

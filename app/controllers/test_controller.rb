@@ -1,4 +1,5 @@
 require 'test_service'
+require 'user_service'
 class TestController < ApplicationController
   VOIDED = 'voided'
   PASS   = 'verified'
@@ -51,6 +52,76 @@ class TestController < ApplicationController
       
        
   end
+
+  def save_order
+   
+    order_location = "ART"
+    specimen_type = params[:specimen_type]
+    tst = [params[:test]]
+    priority = params[:priority]
+    target_lab = params[:target_lab]
+    requesting_clinician = params[:requesting_by]
+    name = params[:name]
+    identifier = params[:id]
+    gender = params[:gender]
+    birthdate = params[:birthdate]
+    patient = ["",name.split(" ")[0],name.split(" ")[1],birthdate,gender]
+    date_drawn = params[:date_drawn]
+    res = TestService.save_order(order_location,specimen_type,tst,priority,target_lab,requesting_clinician,session[:user],patient,identifier,date_drawn)
+
+    render plain: res.to_json and return
+  end
+
+
+  def create_order
+    @person_id = params[:person_id]
+    @name = params[:name]
+    @gender = params[:gender]
+    @birthdate = params[:birthdate]
+    @state_province = params[:state_province]   
+    identifier = ""   
+      r = UserService.search_patient_identifiers_by_patient_id(@person_id,session[:user][0])
+      if r[0] == true
+        r[1][0]['identifier']
+        if r[1][0]['type']['patient_identifier_type_id'] == 3
+            identifier = r[1][0]['identifier']
+        end
+      end    
+    @test_cat = TestService.retrieve_test_catelog
+    @target_lab = TestService.retrieve_target_labs
+    @person_id = identifier
+  end
+
+  def get_test_measures
+      test_name = params[:test_name]
+      res = TestService.query_test_measures(test_name)
+      render plain: res.to_json and return
+  end
+
+  def patient_home
+    @person_id = params[:person_id]
+    @name = params[:name]
+    @gender = params[:gender]
+    @birthdate = params[:birthdate]
+    @state_province = params[:state_province]
+    create_order = params[:create_order]
+    identifier = ""
+    if create_order == "true"
+      identifier = @person_id    
+    else     
+        r = UserService.search_patient_identifiers_by_patient_id(@person_id,session[:user][0])
+        if r[0] == true
+          r[1][0]['identifier']
+          if r[1][0]['type']['patient_identifier_type_id'] == 3
+              identifier = r[1][0]['identifier']
+          end
+        end
+    end
+    @person_id = identifier
+    @res = TestService.get_tests_with_no_results(identifier)    
+  end
+
+
   def save_dispatch
       tracking_number = params[:tracking_number]
       dispatcher = params[:dispatcher]

@@ -14,7 +14,14 @@ Rails.application.routes.draw do
   get  '/test/dispatcher'               => 'test#dispatcher'
   get  '/test/sample_dispatch'          => 'test#sample_dispatch'
   get  '/test/dispatch'                 => 'test#save_dispatch'
-  
+  get  '/user/search_patient'           => 'user#search_patient'
+  get  '/user/found_patients'           => 'user#found_patients'
+  get  '/test/patient_home'             => 'test#patient_home'
+  get  '/test/get_test_measures'        => 'test#get_test_measures'
+  get  '/user/patient_particulars'      => 'user#patient_particulars'
+  get  '/test/create_order'             => 'test#create_order'
+  post '/test/save_order'               => 'test#save_order'
+  get '/test/save_order'               => 'test#save_order'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
