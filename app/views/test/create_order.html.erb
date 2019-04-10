@@ -95,13 +95,14 @@
         sample.innerHTML = "";
         var testCatelog = JSON.parse('<%= raw @test_cat.to_json %>');     
         sampleType = testCatelog[test];
-        var option = document.createElement("option");
+      
         for (var i in sampleType){
+            var option = document.createElement("option");
             option.innerHTML = sampleType[i];
             option.setAttribute('value',sampleType[i]);
+            sample.appendChild(option);
         }
-
-        sample.appendChild(option);
+       
         
     }
 
